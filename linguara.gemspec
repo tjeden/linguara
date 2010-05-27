@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "lib/linguara.rb",
      "lib/linguara/active_record.rb",
      "lib/linguara/configuration.rb",
+     "linguara.gemspec",
      "spec/linguara_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"

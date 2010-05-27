@@ -1,5 +1,5 @@
-require 'rubygems'
-require 'mechanize'
+require 'net/http'
+require 'uri'
 require 'linguara/configuration'
 
 module Linguara
