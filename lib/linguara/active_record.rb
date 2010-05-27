@@ -8,13 +8,19 @@ module Linguara
       def translates_with_linguara(*attr_names)
         include InstanceMethods
         
+        class_inheritable_accessor :linguara_translation_attribute_names
+              
+        self.linguara_translation_attribute_names = attr_names.map(&:to_sym)
+        
         after_save :send_to_linguara 
       end
     end
     
     module InstanceMethods
+
     # protected
-           
+     
+     #TODO describe it, spec and move somewhere else
      # http://www.keyongtech.com/5211204-nested-http-params-on-ruby
      def serialize_form_data(data, path = "",serialized_params = [])
         if data.kind_of? Hash
@@ -30,7 +36,11 @@ module Linguara
       end
       
       def fields_to_send
-        { :olo_token => { :id => 'id1', :content => 'translate_this'}}
+        prepared_fields =  {}
+        linguara_translation_attribute_names.each do |name|
+          prepared_fields["#{self.class.class_name}_#{self.id}_#{name}"] = { :id => name, :content => self.send(name) }
+        end 
+        prepared_fields
       end
 
       def send_to_linguara
