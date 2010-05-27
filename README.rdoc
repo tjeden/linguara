@@ -15,3 +15,5 @@ Description goes here.
 == Copyright
 
 Copyright (c) 2010 Aleksander Dabrowski. See LICENSE for details.
+
+Thanks to: Piotr Barczuk. Additional thanks to Łukasz Adamczak, and Jurek Prokop, who starred at me when I was programming hard parts.
