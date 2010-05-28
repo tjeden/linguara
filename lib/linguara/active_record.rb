@@ -35,10 +35,14 @@ module Linguara
         return serialized_params.join("&") if (path == "")
       end
       
+      def linguara_key_name(field)
+        "#{self.class.class_name}_#{self.id}_#{field}"
+      end      
+      
       def fields_to_send
         prepared_fields =  {}
         linguara_translation_attribute_names.each do |name|
-          prepared_fields["#{self.class.class_name}_#{self.id}_#{name}"] = { :id => name, :content => self.send(name) }
+          prepared_fields[linguara_key_name(name)] = { :id => linguara_key_name(name), :content => self.send(name) }
         end 
         prepared_fields
       end
