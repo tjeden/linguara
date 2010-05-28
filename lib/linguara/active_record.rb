@@ -12,13 +12,12 @@ module Linguara
               
         self.linguara_translation_attribute_names = attr_names.map(&:to_sym)
         
-        after_save :send_to_linguara 
+        after_create :send_to_linguara 
       end
     end
     
     module InstanceMethods
-
-    # protected
+     protected
      
      #TODO describe it, spec and move somewhere else
      # http://www.keyongtech.com/5211204-nested-http-params-on-ruby

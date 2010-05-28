@@ -20,6 +20,7 @@ module Linguara
         content = value[:content]
         original_locale = I18n.locale
         element = class_name.constantize.find(id)
+        
         I18n.locale = target_language
         element.send("#{field_name}=", content)
         element.save(false)
