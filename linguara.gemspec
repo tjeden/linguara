@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{linguara}
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aleksander Dabrowski"]
-  s.date = %q{2010-05-28}
+  s.date = %q{2010-05-29}
   s.description = %q{Gem to integrate with linguara api}
   s.email = %q{aleks@kumulator.pl}
   s.extra_rdoc_files = [
@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "lib/linguara.rb",
      "lib/linguara/active_record.rb",
      "lib/linguara/configuration.rb",
+     "lib/linguara/utils.rb",
      "linguara.gemspec",
      "spec/linguara_spec.rb",
      "spec/spec.opts",
