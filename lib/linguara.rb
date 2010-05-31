@@ -10,7 +10,7 @@ module Linguara
   class << self
     attr_accessor :configuration
     
-    def configure(silent = false)
+    def configure
       self.configuration ||= Configuration.new
       yield(configuration)
     end
@@ -47,8 +47,13 @@ module Linguara
       begin
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }   
       rescue Errno::ETIMEDOUT 
-        #TODO log error
+        handle_request_error
       end
+    end
+    
+    # ovverride this method if you want to perform some action when connection
+    # with linguara cannot be established e.g. log request or redo the send
+    def handle_request_error
     end
     
   end

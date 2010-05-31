@@ -21,7 +21,8 @@ module Linguara
       def fields_to_send
         prepared_fields =  {}
         linguara_translation_attribute_names.each do |name|
-          prepared_fields[linguara_key_name(name)] = { :id => linguara_key_name(name), :content => self.send(name) }
+          key_name = linguara_key_name(name)
+          prepared_fields[key_name] = { :id => key_name, :content => self.send(name) }
         end 
         prepared_fields
       end
