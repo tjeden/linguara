@@ -18,7 +18,7 @@ module Linguara
     def accept_translation(translation)
       target_language = translation[:target_language]
       translation[:paragraph].each do |key,value|
-        class_name,id,field_name = value[:id].split('_')
+        class_name,id,order,field_name = value[:id].split('_')
         content = value[:content]
         original_locale = I18n.locale
         element = class_name.constantize.find(id)

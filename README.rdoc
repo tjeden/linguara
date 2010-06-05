@@ -1,6 +1,6 @@
 = linguara
 
-Description goes here.
+This gem allows integratation with Linguara WebAPI. 
 
 == Note on Patches/Pull Requests
  
@@ -16,4 +16,4 @@ Description goes here.
 
 Copyright (c) 2010 Aleksander Dabrowski. See LICENSE for details.
 
-Thanks to: Piotr Barczuk. Additional thanks to Łukasz Adamczak, and Jurek Prokop, who was starring at me when I was programming hard parts.
+Thanks to: Piotr Barczuk. Additional thanks to Łukasz Adamczak, and Jurek Prokop, who were starring at mine screen while I was programming hard parts.

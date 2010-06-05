@@ -20,8 +20,8 @@ module Linguara
       
       def fields_to_send
         prepared_fields =  {}
-        linguara_translation_attribute_names.each do |name|
-          key_name = linguara_key_name(name)
+        linguara_translation_attribute_names.each_with_index do |name, index|
+          key_name = linguara_key_name(name, index)
           prepared_fields[key_name] = { :id => key_name, :content => self.send(name) }
         end 
         prepared_fields
@@ -29,8 +29,8 @@ module Linguara
       
      protected
       
-      def linguara_key_name(field)
-        "#{self.class.class_name}_#{self.id}_#{field}"
+      def linguara_key_name(field, index)
+        "#{self.class.class_name}_#{self.id}_#{index}_#{field}"
       end      
 
       def send_to_linguara
