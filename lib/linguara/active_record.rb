@@ -12,7 +12,7 @@ module Linguara
               
         self.linguara_translation_attribute_names = attr_names.map(&:to_sym)
 
-        before_save :send_to_linguara 
+        after_create :send_to_linguara 
       end
     end
     
