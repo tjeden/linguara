@@ -7,12 +7,15 @@ module Linguara
     module LinguaraMethods
       def translates_with_linguara(*attr_names)
         include InstanceMethods
+
+        options = attr_names.extract_options!
         
         class_inheritable_accessor :linguara_translation_attribute_names
               
         self.linguara_translation_attribute_names = attr_names.map(&:to_sym)
 
-        after_create :send_to_linguara 
+        after_create :send_to_linguara if options[:send_on] == :create
+        after_save :send_to_linguara if options[:send_on] == :save
       end
     end
     
