@@ -25,7 +25,7 @@ module Linguara
         prepared_fields =  {}
         linguara_translation_attribute_names.each_with_index do |name, index|
           key_name = linguara_key_name(name, index)
-          prepared_fields[key_name] = { :id => key_name, :content => self.send(name) }
+          prepared_fields[key_name] = self.send(name)
         end 
         prepared_fields
       end
@@ -34,10 +34,16 @@ module Linguara
       
       def linguara_key_name(field, index)
         "#{self.class.class_name}_#{self.id}_#{index}_#{field}"
-      end      
+      end
 
-      def send_to_linguara
-        Linguara.send_request(self)
+      #override this if you want to have a customised method for determining which language to use.
+      def linguara_default_translation_language
+        'en'
+      end
+
+      def send_to_linguara(target_language = nil, due_date = nil)
+        target_language ||= linguara_default_translation_language
+        Linguara.send_request(self, target_language, due_date )
       end 
      
     end
