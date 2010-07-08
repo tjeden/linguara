@@ -17,43 +17,48 @@ module Linguara
     
     def accept_translation(translation)
       target_language = translation[:target_language]
-      translation[:paragraph].each do |key,value|
-        class_name,id,order,field_name = value[:id].split('_')
-        content = value[:content]
+      translation[:paragraphs].each do |key,value|
+        class_name,id,order,field_name = key.split('_')
         original_locale = I18n.locale
         element = class_name.constantize.find(id)
         
         I18n.locale = target_language
-        element.send("#{field_name}=", content)
+        element.send("#{field_name}=", value)
         element.save(false)
         I18n.locale = original_locale
       end
     end
     
-    def send_request(element)
+    def send_request(element, target_language, due_date = nil )
+      due_date ||= Linguara.configuration.request_valid_for || (Date.today + 1.month)
       url= URI.parse(Linguara.configuration.server_path)
       req = Net::HTTP::Post.new(url.path)
       req.body = serialize_form_data({
+        :site_url => Linguara.configuration.site_url,
+        :account_token => Linguara.configuration.api_key,
         :translation => {
           :return_url => Linguara.configuration.return_url,
-          :due_date => '27-06-2010',
-          :source_language =>"pl", 
-          :target_language =>"en",
-          :paragraph  => element.fields_to_send,
-          :account_token => Linguara.configuration.api_key}})
+          :due_date => due_date.to_s,
+          :source_language => I18n.locale.to_s,
+          :target_language => target_language,
+          :paragraphs  => element.fields_to_send
+          }})
       req.content_type = 'application/x-www-form-urlencoded'
       req.basic_auth Linguara.configuration.user, Linguara.configuration.password
       #TODO handle timeout
+      Rails.logger.debug("SENDING REQUEST TO #{Linguara.configuration.server_path}: \n#{req.body}")
       begin
-        res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }   
+        res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
+        Rails.logger.debug("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
       rescue Errno::ETIMEDOUT 
         handle_request_error
       end
     end
     
-    # ovverride this method if you want to perform some action when connection
+    # override this method if you want to perform some action when connection
     # with linguara cannot be established e.g. log request or redo the send
     def handle_request_error
+      Rails.logger.error("ERROR WHILE SENDING REQUEST TO LINGUARA: #{$!}")
     end
     
   end
