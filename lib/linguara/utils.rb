@@ -1,6 +1,6 @@
 module Linguara
   module Utils
-    #TODO describe it, spec and move somewhere else
+     #TODO describe it, spec and move somewhere else
      # http://www.keyongtech.com/5211204-nested-http-params-on-ruby
      def serialize_form_data(data, path = "",serialized_params = [])
         if data.kind_of? Hash
