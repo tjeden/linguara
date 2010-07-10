@@ -2,6 +2,24 @@
 
 This gem allows integratation with Linguara WebAPI. 
 
+== Installation
+
+Write about linguara
+
+gem install globalize2
+gem install linguara
+
+Configure application
+
+
+In your model add these two lines:
+
+translates :name, :description
+translates_with_linguara :name, :description
+
+And that's all. Now every time you create your model (by deafult), a request is being send to linguara. When translation will be accepted, request will be sent back to your application and model will be updated. Magic just happend.  
+
+
 == Note on Patches/Pull Requests
  
 * Fork the project.
