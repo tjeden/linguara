@@ -15,6 +15,7 @@ module Linguara
       yield(configuration)
     end
     
+    # Use this method in your controller to accepr and save incoming translations
     def accept_translation(translation)
       target_language = translation[:target_language]
       translation[:paragraphs].each do |key,value|
@@ -29,6 +30,7 @@ module Linguara
       end
     end
     
+    # Sends request with element to linguara using given target_language
     def send_request(element, target_language, due_date = nil )
       due_date ||= Linguara.configuration.request_valid_for 
       url= URI.parse(Linguara.configuration.server_path)
@@ -43,7 +45,7 @@ module Linguara
       end
     end
     
-    # override this method if you want to perform some action when connection
+    # Override this method if you want to perform some action when connection
     # with linguara cannot be established e.g. log request or redo the send
     def handle_request_error
       log("ERROR WHILE SENDING REQUEST TO LINGUARA: #{$!}")

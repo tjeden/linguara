@@ -4,21 +4,27 @@ This gem allows integration with Linguara WebAPI.
 
 == Installation
 
-Write about linguara
+You need to somehow store your translation. We assume you use globalize2
 
-gem install globalize2
-gem install linguara
+  gem install globalize2
+  gem install linguara
 
-Configure application
+Create configuration file in config/initializers/linguara.rb:
 
+  Linguara.configure do |config|
+    config.api_key = 'api_key'
+    config.server_path = 'http://www.example.com/'
+    config.return_url = 'http://maverick.kumulator.com:82/linguara'
+  end
 
 In your model add these two lines:
 
-translates :name, :description
-translates_with_linguara :name, :description
+  BlogPost < ActiveRecord::Base  
+    translates :name, :description
+    translates_with_linguara :name, :description
+  end
 
-And that's all. Now every time you create your model (by deafult), a request is being send to linguara. When translation will be accepted, request will be sent back to your application and model will be updated. Magic just happend.  
-
+And that's all, evrything else is magic. Now every time you create your model (by default), a request is being send to linguara. When translation will be accepted, request will be sent back to your application and model will be updated. 
 
 == Note on Patches/Pull Requests
  

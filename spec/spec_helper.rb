@@ -15,7 +15,7 @@ require 'fakeweb'
 prepare_database
 
 Linguara.configure do |config|
-  config.api_key = 'api_keu'
+  config.api_key = 'api_key'
   config.server_path = 'http://www.example.com/'
   config.return_url = 'http://maverick.kumulator.com:82/linguara'
   config.log = false
