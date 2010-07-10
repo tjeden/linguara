@@ -1,6 +1,6 @@
 = linguara
 
-This gem allows integratation with Linguara WebAPI. 
+This gem allows integration with Linguara WebAPI. 
 
 == Installation
 
