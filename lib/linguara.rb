@@ -30,22 +30,9 @@ module Linguara
     end
     
     def send_request(element, target_language, due_date = nil )
-      due_date ||= Linguara.configuration.request_valid_for || (Date.today + 1.month)
+      due_date ||= Linguara.configuration.request_valid_for 
       url= URI.parse(Linguara.configuration.server_path)
-      req = Net::HTTP::Post.new(url.path)
-      req.body = serialize_form_data({
-        :site_url => Linguara.configuration.site_url,
-        :account_token => Linguara.configuration.api_key,
-        :translation => {
-          :return_url => Linguara.configuration.return_url,
-          :due_date => due_date.to_s,
-          :source_language => I18n.locale.to_s,
-          :target_language => target_language,
-          :paragraphs  => element.fields_to_send
-          }})
-
-      req.content_type = 'application/x-www-form-urlencoded'
-      req.basic_auth Linguara.configuration.user, Linguara.configuration.password
+      req = prepare_request(url, element, target_language, due_date)
       #TODO handle timeout
       log("SENDING REQUEST TO #{Linguara.configuration.server_path}: \n#{req.body}")
       begin
@@ -76,6 +63,24 @@ module Linguara
       Linguara.configuration.log
     end
     
+    private
+    def prepare_request(url, element, target_language, due_date)
+      req = Net::HTTP::Post.new(url.path)
+      req.body = serialize_form_data({
+        :site_url => Linguara.configuration.site_url,
+        :account_token => Linguara.configuration.api_key,
+        :translation => {
+          :return_url => Linguara.configuration.return_url,
+          :due_date => due_date.to_s,
+          :source_language => I18n.locale.to_s,
+          :target_language => target_language,
+          :paragraphs  => element.fields_to_send
+          }})
+
+      req.content_type = 'application/x-www-form-urlencoded'
+      req.basic_auth(Linguara.configuration.user, Linguara.configuration.password)
+      req
+    end
   end
 end
 

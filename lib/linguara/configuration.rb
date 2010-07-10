@@ -4,6 +4,7 @@ module Linguara
     
     def initialize
       self.log = true
+      self.request_valid_for = lambda { Date.today + 1.month }
     end
   end
 end
