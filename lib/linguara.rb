@@ -43,13 +43,14 @@ module Linguara
           :target_language => target_language,
           :paragraphs  => element.fields_to_send
           }})
+
       req.content_type = 'application/x-www-form-urlencoded'
       req.basic_auth Linguara.configuration.user, Linguara.configuration.password
       #TODO handle timeout
-      Rails.logger.debug("SENDING REQUEST TO #{Linguara.configuration.server_path}: \n#{req.body}")
+      log("SENDING REQUEST TO #{Linguara.configuration.server_path}: \n#{req.body}")
       begin
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-        Rails.logger.debug("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
+        log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
       rescue Errno::ETIMEDOUT 
         handle_request_error
       end
@@ -58,7 +59,21 @@ module Linguara
     # override this method if you want to perform some action when connection
     # with linguara cannot be established e.g. log request or redo the send
     def handle_request_error
-      Rails.logger.error("ERROR WHILE SENDING REQUEST TO LINGUARA: #{$!}")
+      log("ERROR WHILE SENDING REQUEST TO LINGUARA: #{$!}")
+    end
+    
+    # Log a linguara-specific line. Uses Rails.logger
+    # by default. Set Lingurara.config.log = false to turn off.
+    def log message
+      logger.info("[linguara] #{message}") if logging?
+    end
+
+    def logger #:nodoc:
+      Rails.logger
+    end
+
+    def logging? #:nodoc:
+      Linguara.configuration.log
     end
     
   end
