@@ -30,7 +30,8 @@ module Linguara
     end
     
     def send_translation_request(element, target_language, due_date = nil )
-      due_date ||= Linguara.configuration.request_valid_for || (Date.today + 1.month)
+      due_date ||= Date.today + Linguara.configuration.request_valid_for.to_i.days unless Linguara.configuration.request_valid_for.blank?
+      due_date ||= Date.today + 1.month
       log("due date: #{due_date}")
       url= URI.parse(Linguara.configuration.server_path + 'api/create_translation_request.xml')
       translation_hash = { :translation => {
