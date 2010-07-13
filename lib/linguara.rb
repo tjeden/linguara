@@ -98,7 +98,7 @@ module Linguara
           }})
 
       req.content_type = 'application/x-www-form-urlencoded'
-      #req.basic_auth(Linguara.configuration.user, Linguara.configuration.password)
+      req.basic_auth(Linguara.configuration.user, Linguara.configuration.password)
       req
     end
   end
