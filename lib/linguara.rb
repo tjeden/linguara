@@ -31,6 +31,7 @@ module Linguara
     
     def send_translation_request(element, target_language, due_date = nil )
       due_date ||= Linguara.configuration.request_valid_for || (Date.today + 1.month)
+      log("due date: #{due_date}")
       url= URI.parse(Linguara.configuration.server_path + 'api/create_translation_request.xml')
       translation_hash = { :translation => {
           :return_url => Linguara.configuration.return_url,
@@ -41,10 +42,10 @@ module Linguara
           }}
       req = prepare_request(url, translation_hash)
       #TODO handle timeout
-      logger.debug("SENDING TRANSLATION REQUEST TO #{url.path}: \n#{req.body}")
+      log("SENDING TRANSLATION REQUEST TO #{url.path}: \n#{req.body}")
       begin
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-        logger.debug("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
+        log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
         return res
 
       rescue Errno::ETIMEDOUT 
