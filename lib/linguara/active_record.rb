@@ -29,6 +29,18 @@ module Linguara
         end 
         prepared_fields
       end
+
+      def send_to_linguara(target_language = nil, due_date = nil)
+        before_send_to_linguara
+        target_language ||= linguara_default_translation_language
+        res = Linguara.send_translation_request(self, target_language, due_date )
+        after_send_to_linguara(res)
+        res
+      end
+
+      def send_status_query(translation_request_id)
+        Linguara.send_status_query(translation_request_id)
+      end
       
      protected
       
@@ -41,10 +53,13 @@ module Linguara
         'en'
       end
 
-      def send_to_linguara(target_language = nil, due_date = nil)
-        target_language ||= linguara_default_translation_language
-        Linguara.send_request(self, target_language, due_date )
-      end 
+      #override for some callbacks
+      def before_send_to_linguara
+      end
+
+      def after_send_to_linguara(response)
+        Rails.logger.debug("LINGUARA RESPONSE: #{response.message} -- #{response.body}")
+      end
      
     end
   end
