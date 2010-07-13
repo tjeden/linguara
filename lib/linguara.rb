@@ -32,7 +32,14 @@ module Linguara
     def send_translation_request(element, target_language, due_date = nil )
       due_date ||= Linguara.configuration.request_valid_for || (Date.today + 1.month)
       url= URI.parse(Linguara.configuration.server_path + 'api/create_translation_request.xml')
-      req = prepare_request(url, element, target_language, due_date)
+      translation_hash = { :translation => {
+          :return_url => Linguara.configuration.return_url,
+          :due_date => due_date.to_s,
+          :source_language => I18n.locale.to_s,
+          :target_language => target_language,
+          :paragraphs  => element.fields_to_send
+          }}
+      req = prepare_request(url, translation_hash)
       #TODO handle timeout
       logger.debug("SENDING TRANSLATION REQUEST TO #{url.path}: \n#{req.body}")
       begin
@@ -47,12 +54,7 @@ module Linguara
 
     def send_status_query(translation_request_id)
       url= URI.parse("#{Linguara.configuration.server_path}api/#{translation_request_id}/translation_status.xml")
-      req = Net::HTTP::Post.new(url.path)
-      req.body = serialize_form_data({
-        :site_url => Linguara.configuration.site_url,
-        :account_token => Linguara.configuration.api_key,
-      })
-      req.content_type = 'application/x-www-form-urlencoded'
+      req = prepare_request(url, {})
       logger.debug("SENDING STATUS QUERY REQUEST TO #{url.path}: \n#{req.body}")
       begin
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
@@ -84,18 +86,12 @@ module Linguara
     end
     
     private
-    def prepare_request(url, element, target_language, due_date)
+    def prepare_request(url, data)
       req = Net::HTTP::Post.new(url.path)
       req.body = serialize_form_data({
         :site_url => Linguara.configuration.site_url,
-        :account_token => Linguara.configuration.api_key,
-        :translation => {
-          :return_url => Linguara.configuration.return_url,
-          :due_date => due_date.to_s,
-          :source_language => I18n.locale.to_s,
-          :target_language => target_language,
-          :paragraphs  => element.fields_to_send
-          }})
+        :account_token => Linguara.configuration.api_key
+        }.merge(data))
 
       req.content_type = 'application/x-www-form-urlencoded'
       req.basic_auth(Linguara.configuration.user, Linguara.configuration.password)
