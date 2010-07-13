@@ -34,10 +34,10 @@ module Linguara
       url= URI.parse(Linguara.configuration.server_path + 'api/create_translation_request.xml')
       req = prepare_request(url, element, target_language, due_date)
       #TODO handle timeout
-      Rails.logger.debug("SENDING TRANSLATION REQUEST TO #{url.path}: \n#{req.body}")
+      logger.debug("SENDING TRANSLATION REQUEST TO #{url.path}: \n#{req.body}")
       begin
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-        Rails.logger.debug("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
+        logger.debug("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
         return res
 
       rescue Errno::ETIMEDOUT 
@@ -53,10 +53,10 @@ module Linguara
         :account_token => Linguara.configuration.api_key,
       })
       req.content_type = 'application/x-www-form-urlencoded'
-      Rails.logger.debug("SENDING STATUS QUERY REQUEST TO #{url.path}: \n#{req.body}")
+      logger.debug("SENDING STATUS QUERY REQUEST TO #{url.path}: \n#{req.body}")
       begin
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-        Rails.logger.debug("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
+        logger.debug("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
         return res
       rescue Errno::ETIMEDOUT
         handle_request_error
