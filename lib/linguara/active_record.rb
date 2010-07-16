@@ -58,7 +58,6 @@ module Linguara
       end
 
       def after_send_to_linguara(response)
-        Rails.logger.debug("LINGUARA RESPONSE: #{response.message} -- #{response.body}")
       end
      
     end
