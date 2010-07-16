@@ -15,6 +15,7 @@ module Linguara
       yield(configuration)
     end
     
+    # Use this method in your controller to accepr and save incoming translations
     def accept_translation(translation)
       target_language = translation[:target_language]
       translation[:paragraphs].each do |key,value|
@@ -48,7 +49,6 @@ module Linguara
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
         log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
         return res
-
       rescue Errno::ETIMEDOUT 
         handle_request_error
       end
@@ -67,7 +67,7 @@ module Linguara
       end
     end
     
-    # override this method if you want to perform some action when connection
+    # Override this method if you want to perform some action when connection
     # with linguara cannot be established e.g. log request or redo the send
     def handle_request_error
       log("ERROR WHILE SENDING REQUEST TO LINGUARA: #{$!}")
@@ -94,7 +94,6 @@ module Linguara
         :site_url => Linguara.configuration.site_url,
         :account_token => Linguara.configuration.api_key
         }.merge(data))
-
       req.content_type = 'application/x-www-form-urlencoded'
       req.basic_auth(Linguara.configuration.user, Linguara.configuration.password)
       req
