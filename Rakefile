@@ -44,3 +44,15 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
+
+task :metric do
+  FLAY_MAX = 100
+  correct = true
+  metric_output = %x[flay -s lib/*]
+  if metric_output.first.gsub("Total score (lower is better) = ","").to_i > FLAY_MAX
+    correct = false 
+    puts "Too much flay. It should be less than: #{FLAY_MAX}"
+    puts metric_output
+  end
+  exit(1) unless correct
+end
