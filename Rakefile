@@ -9,7 +9,7 @@ begin
     gem.description = %Q{Gem to integrate with linguara api}
     gem.email = "aleks@kumulator.pl"
     gem.homepage = "http://github.com/tjeden/linguara"
-    gem.authors = ["Aleksander Dabrowski"]
+    gem.authors = ["Aleksander Dabrowski", "Piotr Barczuk"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.files += FileList['lib/**/*.rb']
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
