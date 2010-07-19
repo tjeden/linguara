@@ -76,6 +76,7 @@ module Linguara
     # Log a linguara-specific line. Uses Rails.logger
     # by default. Set Lingurara.config.log = false to turn off.
     def log message
+      #puts message
       logger.info("[linguara] #{message}") if logging?
     end
 
