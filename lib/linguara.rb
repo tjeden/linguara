@@ -2,6 +2,7 @@ require 'net/http'
 require 'uri'
 require 'linguara/configuration'
 require 'linguara/utils'
+require 'linguara/translation'
 
 module Linguara
   extend Linguara::Utils
@@ -30,22 +31,13 @@ module Linguara
       end
     end
     
-    def send_translation_request(element, target_language, due_date = nil )
-      due_date ||= Date.today + Linguara.configuration.request_valid_for.to_i.days unless Linguara.configuration.request_valid_for.blank?
-      due_date ||= Date.today + 1.month
-      log("due date: #{due_date}")
-      url= URI.parse(Linguara.configuration.server_path + 'api/create_translation_request.xml')
-      translation_hash = { :translation => {
-          :return_url => Linguara.configuration.return_url,
-          :due_date => due_date.to_s,
-          :source_language => I18n.locale.to_s,
-          :target_language => target_language,
-          :paragraphs  => element.fields_to_send
-          }}
-      req = prepare_request(url, translation_hash)
+    def send_translation_request(element, options = {})
+      translation = Translation.new(element, options) 
+      url= URI.parse("#{Linguara.configuration.server_path}api/create_translation_request.xml")
+      req = prepare_request(url, :translation => translation.to_hash)
       #TODO handle timeout
-      log("SENDING TRANSLATION REQUEST TO #{url.path}: \n#{req.body}")
       begin
+        log("SENDING TRANSLATION REQUEST TO #{url.path}: \n#{req.body}")
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
         log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
         return res
@@ -57,8 +49,8 @@ module Linguara
     def send_status_query(translation_request_id)
       url= URI.parse("#{Linguara.configuration.server_path}api/#{translation_request_id}/translation_status.xml")
       req = prepare_request(url, {})
-      logger.debug("SENDING STATUS QUERY REQUEST TO #{url.path}: \n#{req.body}")
       begin
+        logger.debug("SENDING STATUS QUERY REQUEST TO #{url.path}: \n#{req.body}")
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
         logger.debug("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
         return res
@@ -89,6 +81,7 @@ module Linguara
     end
     
     private
+    
     def prepare_request(url, data)
       req = Net::HTTP::Post.new(url.path)
       req.body = serialize_form_data({

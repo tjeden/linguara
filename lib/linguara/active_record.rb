@@ -30,10 +30,9 @@ module Linguara
         prepared_fields
       end
 
-      def send_to_linguara(target_language = nil, due_date = nil)
-        before_send_to_linguara
-        target_language ||= linguara_default_translation_language
-        res = Linguara.send_translation_request(self, target_language, due_date )
+      def send_to_linguara(options = {})
+        options = before_send_to_linguara(options)
+        res = Linguara.send_translation_request(self, options )
         after_send_to_linguara(res)
         res
       end
@@ -54,7 +53,8 @@ module Linguara
       end
 
       #override for some callbacks
-      def before_send_to_linguara
+      def before_send_to_linguara(options)
+        options
       end
 
       def after_send_to_linguara(response)
