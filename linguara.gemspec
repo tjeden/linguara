@@ -35,7 +35,8 @@ Gem::Specification.new do |s|
      "spec/helper_model/database_mock.rb",
      "spec/linguara_spec.rb",
      "spec/spec.opts",
-     "spec/spec_helper.rb"
+     "spec/spec_helper.rb",
+     "spec/translation_spec.rb"
   ]
   s.homepage = %q{http://github.com/tjeden/linguara}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -47,7 +48,8 @@ Gem::Specification.new do |s|
      "spec/helper_model/blog_post.rb",
      "spec/helper_model/database_mock.rb",
      "spec/linguara_spec.rb",
-     "spec/spec_helper.rb"
+     "spec/spec_helper.rb",
+     "spec/translation_spec.rb"
   ]
 
   if s.respond_to? :specification_version then

@@ -49,6 +49,7 @@ module Linguara
     def send_status_query(translation_request_id)
       url= URI.parse("#{Linguara.configuration.server_path}api/#{translation_request_id}/translation_status.xml")
       req = prepare_request(url, {})
+       #TODO handle timeout
       begin
         logger.debug("SENDING STATUS QUERY REQUEST TO #{url.path}: \n#{req.body}")
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
