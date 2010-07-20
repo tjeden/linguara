@@ -60,6 +60,19 @@ module Linguara
       end
     end
     
+    def send_languages_request(options={})
+      url= URI.parse("#{Linguara.configuration.server_path}api/languages.xml")
+      req = prepare_request(url, :language => options, :method => :get)
+      #TODO handle timeout
+      puts url
+     begin
+       res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
+       return res
+     rescue Errno::ETIMEDOUT
+       handle_request_error
+     end
+    end
+    
     # Override this method if you want to perform some action when connection
     # with linguara cannot be established e.g. log request or redo the send
     def handle_request_error
@@ -83,12 +96,17 @@ module Linguara
     
     private
     
-    def prepare_request(url, data)
-      req = Net::HTTP::Post.new(url.path)
+    def prepare_request(url, data )
+      if data[:method] == :get
+        req = Net::HTTP::Get.new(url.path)
+        data.delete(:method)
+      else
+       req = Net::HTTP::Post.new(url.path)
+      end
       req.body = serialize_form_data({
         :site_url => Linguara.configuration.site_url,
         :account_token => Linguara.configuration.api_key
-        }.merge(data))
+       }.merge(data))
       req.content_type = 'application/x-www-form-urlencoded'
       req.basic_auth(Linguara.configuration.user, Linguara.configuration.password)
       req
