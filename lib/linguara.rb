@@ -35,41 +35,19 @@ module Linguara
       translation = Translation.new(element, options) 
       url= URI.parse("#{Linguara.configuration.server_path}api/create_translation_request.xml")
       req = prepare_request(url, :translation => translation.to_hash)
-      #TODO handle timeout
-      begin
-        log("SENDING TRANSLATION REQUEST TO #{url.path}: \n#{req.body}")
-        res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-        log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
-        return res
-      rescue Errno::ETIMEDOUT 
-        handle_request_error
-      end
+      send_linguara_request(req, url)
     end
 
     def send_status_query(translation_request_id)
       url= URI.parse("#{Linguara.configuration.server_path}api/#{translation_request_id}/translation_status.xml")
       req = prepare_request(url, {})
-       #TODO handle timeout
-      begin
-        log("SENDING STATUS QUERY REQUEST TO #{url.path}: \n#{req.body}")
-        res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-        log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
-        return res
-      rescue Errno::ETIMEDOUT
-        handle_request_error
-      end
+      send_linguara_request(req, url)
     end
     
     def send_languages_request(options={})
       url= URI.parse("#{Linguara.configuration.server_path}api/languages.xml")
       req = prepare_request(url, :language => options, :method => :get)
-      #TODO handle timeout
-     begin
-       res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-       return res
-     rescue Errno::ETIMEDOUT
-       handle_request_error
-     end
+      send_linguara_request(req, url)
     end
     
     # Override this method if you want to perform some action when connection
@@ -109,6 +87,18 @@ module Linguara
       req.content_type = 'application/x-www-form-urlencoded'
       req.basic_auth(Linguara.configuration.user, Linguara.configuration.password)
       req
+    end
+    
+    def send_linguara_request(req, url)
+    #TODO handle timeout
+     begin
+       log("SENDING LINGUARA REQUEST TO #{url.path}: \n#{req.body}")
+       res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
+       log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
+       return res
+     rescue Errno::ETIMEDOUT 
+       handle_request_error
+     end
     end
   end
 end
