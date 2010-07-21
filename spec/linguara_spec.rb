@@ -63,6 +63,14 @@ describe "Linguara" do
       response.body.should eql('response_from_linguara')
     end
   end
+  
+  describe '#send_translators_request' do
+    it 'sends request' do
+      FakeWeb.register_uri(:get, "http://www.example.com/api/translators.xml", :body => 'response_from_linguara', :status => 200) 
+      response = Linguara.send_translators_request("city"=>"warsaw", "country"=>"pl", "max_price"=>"12", "query"=>"wojcisz", "target_language"=>"en", "source_language" => "pl")
+      response.body.should eql('response_from_linguara')
+    end
+  end
 
 end
 

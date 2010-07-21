@@ -40,7 +40,7 @@ module Linguara
 
     def send_status_query(translation_request_id)
       url= URI.parse("#{Linguara.configuration.server_path}api/#{translation_request_id}/translation_status.xml")
-      req = prepare_request(url, {})
+      req = prepare_request(url)
       send_linguara_request(req, url)
     end
     
@@ -56,6 +56,11 @@ module Linguara
       send_linguara_request(req, url)
     end
     
+    def send_translators_request(options)
+      url= URI.parse("#{Linguara.configuration.server_path}api/translators.xml")
+      req = prepare_request(url, :translators => options, :method => :get)
+      send_linguara_request(req, url)
+    end
     # Override this method if you want to perform some action when connection
     # with linguara cannot be established e.g. log request or redo the send
     def handle_request_error
@@ -78,7 +83,7 @@ module Linguara
     
     private
     
-    def prepare_request(url, data )
+    def prepare_request(url, data = {} )
       if data[:method] == :get
         req = Net::HTTP::Get.new(url.path)
         data.delete(:method)
