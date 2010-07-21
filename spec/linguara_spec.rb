@@ -30,21 +30,32 @@ describe "Linguara" do
      translation.title.should eql("Hello World!")
      translation.body.should eql("Today is great weather, and I am going to EuRuKo.")
   end
-
+  
+  describe '#send_translation_request' do
+    it 'sends request' do
+      blog_post = BlogPost.new( :title => "Old title", :body => "Old body")
+      FakeWeb.register_uri(:post, "http://www.example.com/api/create_translation_request.xml", :body => 'response_from_linguara', :status => 200) 
+      response = Linguara.send_translation_request(blog_post)
+      response.body.should eql('response_from_linguara')
+    end     
+  end
+  
+  describe '#send_status_query' do
+    it 'sends request' do
+      FakeWeb.register_uri(:post, "http://www.example.com/api/5/translation_status.xml", :body => 'response_from_linguara', :status => 200) 
+      response = Linguara.send_status_query(5)
+      response.body.should eql('response_from_linguara')
+    end     
+  end
+  
   describe '#send_languages_request' do
     it 'sends request' do
       FakeWeb.register_uri(:get, "http://www.example.com/api/languages.xml", :body => 'response_from_linguara', :status => 200) 
-
-
-      #url= URI.parse("http://www.example.com/api/languages.xml")
-      #req = Net::HTTP::Get.new(url.path)
-      #req.content_type = 'application/x-www-form-urlencoded'
-      #response = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-      
       response = Linguara.send_languages_request("city"=>"321", "specialization"=>"technical", "country"=>"pl", "native_speaker"=>"1", "max_price"=>"12")
       response.body.should eql('response_from_linguara')
     end
   end
+  
 
 end
 

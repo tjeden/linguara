@@ -51,9 +51,9 @@ module Linguara
       req = prepare_request(url, {})
        #TODO handle timeout
       begin
-        logger.debug("SENDING STATUS QUERY REQUEST TO #{url.path}: \n#{req.body}")
+        log("SENDING STATUS QUERY REQUEST TO #{url.path}: \n#{req.body}")
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-        logger.debug("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
+        log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
         return res
       rescue Errno::ETIMEDOUT
         handle_request_error
@@ -64,7 +64,6 @@ module Linguara
       url= URI.parse("#{Linguara.configuration.server_path}api/languages.xml")
       req = prepare_request(url, :language => options, :method => :get)
       #TODO handle timeout
-      puts url
      begin
        res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
        return res
