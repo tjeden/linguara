@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe "Linguara" do
   
   it "sent message to linguara for translatable classes" do
-    FakeWeb.register_uri(:post, 'http://www.example.com/api/create_translation_request.xml', :exception => Net::HTTPError)  
+    FakeWeb.register_uri(:post, 'http://www.example.com/api/translations.xml', :exception => Net::HTTPError)  
     blog_post = BlogPost.new( :title => "Title text", :body => "Body text")
     lambda { 
       blog_post.save
@@ -34,7 +34,7 @@ describe "Linguara" do
   describe '#send_translation_request' do
     it 'sends request' do
       blog_post = BlogPost.new( :title => "Old title", :body => "Old body")
-      FakeWeb.register_uri(:post, "http://www.example.com/api/create_translation_request.xml", :body => 'response_from_linguara', :status => 200) 
+      FakeWeb.register_uri(:post, "http://www.example.com/api/translations.xml", :body => 'response_from_linguara', :status => 200) 
       response = Linguara.send_translation_request(blog_post)
       response.body.should eql('response_from_linguara')
     end     
@@ -42,7 +42,7 @@ describe "Linguara" do
   
   describe '#send_status_query' do
     it 'sends request' do
-      FakeWeb.register_uri(:post, "http://www.example.com/api/5/translation_status.xml", :body => 'response_from_linguara', :status => 200) 
+      FakeWeb.register_uri(:post, "http://www.example.com/api/translations/5/status.xml", :body => 'response_from_linguara', :status => 200) 
       response = Linguara.send_status_query(5)
       response.body.should eql('response_from_linguara')
     end     

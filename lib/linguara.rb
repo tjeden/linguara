@@ -33,34 +33,35 @@ module Linguara
     
     def send_translation_request(element, options = {})
       translation = Translation.new(element, options) 
-      url= URI.parse("#{Linguara.configuration.server_path}api/create_translation_request.xml")
-      req = prepare_request(url, :translation => translation.to_hash)
+      url= URI.parse("#{Linguara.configuration.server_path}api/translations.xml")
+      req = prepare_request(url, translation.to_hash)
       send_linguara_request(req, url)
     end
 
     def send_status_query(translation_request_id)
-      url= URI.parse("#{Linguara.configuration.server_path}api/#{translation_request_id}/translation_status.xml")
+      url= URI.parse("#{Linguara.configuration.server_path}api/translations/#{translation_request_id}/status.xml")
       req = prepare_request(url)
       send_linguara_request(req, url)
     end
     
     def send_languages_request(options={})
       url= URI.parse("#{Linguara.configuration.server_path}api/languages.xml")
-      req = prepare_request(url, :language => options, :method => :get)
+      req = prepare_request(url, options.merge(:method => :get))
       send_linguara_request(req, url)
     end
     
     def send_specializations_request(options)
       url= URI.parse("#{Linguara.configuration.server_path}api/specializations.xml")
-      req = prepare_request(url, :specialization => options, :method => :get)
+      req = prepare_request(url, options.merge(:method => :get))
       send_linguara_request(req, url)
     end
     
     def send_translators_request(options)
       url= URI.parse("#{Linguara.configuration.server_path}api/translators.xml")
-      req = prepare_request(url, :translators => options, :method => :get)
+      req = prepare_request(url, options.merge(:method => :get))
       send_linguara_request(req, url)
     end
+    
     # Override this method if you want to perform some action when connection
     # with linguara cannot be established e.g. log request or redo the send
     def handle_request_error
