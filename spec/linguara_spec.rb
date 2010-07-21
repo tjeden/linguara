@@ -56,6 +56,13 @@ describe "Linguara" do
     end
   end
   
+  describe '#send_specializations_request' do
+    it 'sends request' do
+      FakeWeb.register_uri(:get, "http://www.example.com/api/specializations.xml", :body => 'response_from_linguara', :status => 200) 
+      response = Linguara.send_specializations_request("language"=>"suomi", "sworn" => "1", "native_speaker"=>"1", "max_price"=>"12")
+      response.body.should eql('response_from_linguara')
+    end
+  end
 
 end
 

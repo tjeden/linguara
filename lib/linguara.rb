@@ -50,6 +50,12 @@ module Linguara
       send_linguara_request(req, url)
     end
     
+    def send_specializations_request(options)
+      url= URI.parse("#{Linguara.configuration.server_path}api/specializations.xml")
+      req = prepare_request(url, :specialization => options, :method => :get)
+      send_linguara_request(req, url)
+    end
+    
     # Override this method if you want to perform some action when connection
     # with linguara cannot be established e.g. log request or redo the send
     def handle_request_error
@@ -59,7 +65,6 @@ module Linguara
     # Log a linguara-specific line. Uses Rails.logger
     # by default. Set Lingurara.config.log = false to turn off.
     def log message
-      #puts message
       logger.info("[linguara] #{message}") if logging?
     end
 
@@ -90,15 +95,15 @@ module Linguara
     end
     
     def send_linguara_request(req, url)
-    #TODO handle timeout
-     begin
-       log("SENDING LINGUARA REQUEST TO #{url.path}: \n#{req.body}")
-       res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-       log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
-       return res
-     rescue Errno::ETIMEDOUT 
-       handle_request_error
-     end
+      #TODO handle timeout
+      begin
+        log("SENDING LINGUARA REQUEST TO #{url.path}: \n#{req.body}")
+        res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
+        log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
+        return res
+      rescue Errno::ETIMEDOUT 
+        handle_request_error
+      end
     end
   end
 end
