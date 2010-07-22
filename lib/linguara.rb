@@ -74,7 +74,7 @@ module Linguara
       logger.info("[linguara] #{message}") if logging?
     end
 
-    def logger #:nodoc:
+    def logger #:nodoc:      
       Rails.logger
     end
 
@@ -106,7 +106,12 @@ module Linguara
         log("SENDING LINGUARA REQUEST TO #{url.path}: \n#{req.body}")
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
         log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
-        return res
+        #TODO maybe it should be just param or smth,
+        if Linguara.configuration.return_request
+          return req
+        else
+          return res
+        end
       rescue Errno::ETIMEDOUT 
         handle_request_error
       end
