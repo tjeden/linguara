@@ -40,7 +40,7 @@ module Linguara
 
     def send_status_query(translation_request_id)
       url= URI.parse("#{Linguara.configuration.server_path}api/translations/#{translation_request_id}/status.xml")
-      req = prepare_request(url)
+      req = prepare_request(url, :authorization => true)
       send_linguara_request(req, url)
     end
     
@@ -58,7 +58,7 @@ module Linguara
     
     def send_translators_request(options)
       url= URI.parse("#{Linguara.configuration.server_path}api/translators.xml")
-      req = prepare_request(url, options.merge(:method => :get, :authorization => true))
+      req = prepare_request(url, options.merge(:method => :get))
       send_linguara_request(req, url)
     end
     
@@ -92,12 +92,13 @@ module Linguara
        req = Net::HTTP::Post.new(url.path)
       end
       if data[:authorization]
-        req.body = serialize_form_data(data)
-      else
+        data.delete(:authorization)
         req.body = serialize_form_data({
           :site_url => Linguara.configuration.site_url,
           :account_token => Linguara.configuration.api_key
          }.merge(data))
+      else
+        req.body = serialize_form_data(data)
       end
       req.content_type = 'application/x-www-form-urlencoded'
       req.basic_auth(Linguara.configuration.user, Linguara.configuration.password)
