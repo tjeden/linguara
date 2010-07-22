@@ -106,7 +106,7 @@ module Linguara
         log("SENDING LINGUARA REQUEST TO #{url.path}: \n#{req.body}")
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
         log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
-        #TODO maybe it should be just param or smth,
+        #TODO there should be object returned, whih contains request and respnse
         if Linguara.configuration.return_request
           return req
         else

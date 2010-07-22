@@ -7,7 +7,7 @@ describe Translation do
   end
   
   it 'creates default due_date on default' do
-    subject.to_hash[:due_date].should eql(Date.today + Linguara.configuration.request_valid_for.to_i.days)
+    subject.to_hash[:translation][:due_date].should eql(Date.today + Linguara.configuration.request_valid_for.to_i.days)
   end
   
   it 'creates return_url on default' do
@@ -19,6 +19,6 @@ describe Translation do
   end
 
   it 'creates paragraphs for model' do
-    subject.to_hash[:paragraphs].should eql(@blog_post.fields_to_send)
+    subject.to_hash[:content][:plain][:paragraphs].should eql(@blog_post.fields_to_send)
   end
 end
