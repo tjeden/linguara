@@ -85,7 +85,8 @@ module Linguara
     private
     
     def prepare_request(url, data = {} )
-      data = data.delete_if { |k,v| v.blank?}
+      data = strip_blank_attributes(data)
+
       if data[:method] == :get
         req = Net::HTTP::Get.new(url.path)
         data.delete(:method)

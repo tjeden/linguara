@@ -96,6 +96,12 @@ describe "Linguara" do
       request.body.include?("blank_attribute").should be_false
     end
     
+    it 'skips blank parameters deep' do
+      request = Linguara.send(:prepare_request, @url, @options.merge(:blank_parent => { :blank_attribute => ""}))
+      request.body.include?("blank_attribute").should be_false
+      request.body.include?("blank_parent").should be_false
+    end
+    
     it 'sets content type to application/x-www-form-urlencoded' do
       request = Linguara.send(:prepare_request, @url, @options)
       request.content_type.should be_eql("application/x-www-form-urlencoded")    
