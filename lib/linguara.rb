@@ -85,11 +85,12 @@ module Linguara
     private
     
     def prepare_request(url, data = {} )
+      data = data.delete_if { |k,v| v.blank?}
       if data[:method] == :get
         req = Net::HTTP::Get.new(url.path)
         data.delete(:method)
       else
-       req = Net::HTTP::Post.new(url.path)
+        req = Net::HTTP::Post.new(url.path)
       end
       if data[:authorization]
         data.delete(:authorization)

@@ -12,7 +12,8 @@ describe "Linguara" do
   end
   
   it 'accepts correct translation' do
-     FakeWeb.register_uri(:post, 'http://www.example.com/', :body => 'response_for_linguara', :status => 200)  
+     FakeWeb.register_uri(:post, 'http://www.example.com/', :body => 'response_for_linguara', :status => 200)
+     FakeWeb.register_uri(:post, 'http://www.example.com/api/translations.xml', :status => 200) 
      blog_post = BlogPost.new( :title => "Old title", :body => "Old body")
      blog_post.save
      id = blog_post.id
@@ -70,6 +71,36 @@ describe "Linguara" do
       response = Linguara.send_translators_request("city"=>"warsaw", "country"=>"pl", "max_price"=>"12", "query"=>"wojcisz", "target_language"=>"en", "source_language" => "pl")
       response.body.should eql('response_from_linguara')
     end
+  end
+  
+  describe '#prepare_request' do
+    before :each do
+      @url = URI.parse("http://www.example.com/api/translations")
+      @options = { :translation => { :translator => { :city => "Prague"}}}
+    end
+    
+    it 'sets :POST by deafault' do
+      request = Linguara.send(:prepare_request, @url, @options)
+      request.is_a?(Net::HTTP::Post).should be_true
+      request.body.include?("post").should be_false
+    end
+    
+    it 'sets :GET when option given' do
+      request = Linguara.send(:prepare_request, @url, @options.merge(:method => :get))
+      request.is_a?(Net::HTTP::Get).should be_true
+      request.body.include?("get").should be_false
+    end
+    
+    it 'skips blank parameters' do
+      request = Linguara.send(:prepare_request, @url, @options.merge(:blank_attribute => ""))
+      request.body.include?("blank_attribute").should be_false
+    end
+    
+    it 'sets content type to application/x-www-form-urlencoded' do
+      request = Linguara.send(:prepare_request, @url, @options)
+      request.content_type.should be_eql("application/x-www-form-urlencoded")    
+    end
+  
   end
 
 end
