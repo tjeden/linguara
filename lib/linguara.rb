@@ -86,14 +86,13 @@ module Linguara
     
     def prepare_request(url, data = {} )
       data = strip_blank_attributes(data)
-
       if data[:method] == :get
         req = Net::HTTP::Get.new(url.path)
         data.delete(:method)
       else
         req = Net::HTTP::Post.new(url.path)
       end
-      if data[:authorization]
+      if data[:authorization]   
         data.delete(:authorization)
         req.body = serialize_form_data({
           :site_url => Linguara.configuration.site_url,
