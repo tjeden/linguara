@@ -3,6 +3,7 @@ require 'uri'
 require 'linguara/configuration'
 require 'linguara/utils'
 require 'linguara/translation'
+require 'linguara/request'
 
 module Linguara
   extend Linguara::Utils
@@ -112,12 +113,7 @@ module Linguara
         log("SENDING LINGUARA REQUEST TO #{url.path}: \n#{req.body}")
         res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
         log("LINGUARA RESPONSE: #{res.message} -- #{res.body}")
-        #TODO there should be object returned, whih contains request and respnse
-        if Linguara.configuration.return_request
-          return req
-        else
-          return res
-        end
+        return LinguaraRequest.new( :request => req, :response => res )
       rescue Errno::ETIMEDOUT 
         handle_request_error
       end
