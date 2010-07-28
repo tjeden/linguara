@@ -32,6 +32,7 @@ module Linguara
       end
     end
     
+    # Sends translation request
     def send_translation_request(element, options = {})
       translation = Translation.new(element, options) 
       url= URI.parse("#{Linguara.configuration.server_path}api/translations.xml")
@@ -39,24 +40,28 @@ module Linguara
       send_linguara_request(req, url)
     end
 
+    # Sends status request
     def send_status_query(translation_request_id)
       url= URI.parse("#{Linguara.configuration.server_path}api/translations/#{translation_request_id}/status.xml")
       req = prepare_request(url, :authorization => true)
       send_linguara_request(req, url)
     end
     
+    # Sends languages request
     def send_languages_request(options={})
       url= URI.parse("#{Linguara.configuration.server_path}api/languages.xml")
       req = prepare_request(url, options.merge(:method => :get))
       send_linguara_request(req, url)
     end
     
+    # Sends specializations request
     def send_specializations_request(options)
       url= URI.parse("#{Linguara.configuration.server_path}api/specializations.xml")
       req = prepare_request(url, options.merge(:method => :get))
       send_linguara_request(req, url)
     end
     
+    # Sends translators request
     def send_translators_request(options)
       url= URI.parse("#{Linguara.configuration.server_path}api/translators.xml")
       req = prepare_request(url, options.merge(:method => :get))
