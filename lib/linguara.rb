@@ -56,14 +56,14 @@ module Linguara
     end
     
     # Sends specializations request
-    def send_specializations_request(options)
+    def send_specializations_request(options = {})
       url= URI.parse("#{Linguara.configuration.server_path}api/specializations.xml")
       req = prepare_request(url, options.merge(:method => :get))
       send_linguara_request(req, url)
     end
     
     # Sends translators request
-    def send_translators_request(options)
+    def send_translators_request(options = {})
       url= URI.parse("#{Linguara.configuration.server_path}api/translators.xml")
       req = prepare_request(url, options.merge(:method => :get))
       send_linguara_request(req, url)
@@ -74,6 +74,12 @@ module Linguara
         [element.xpath('name').inner_text, element.xpath('code').inner_text]
       end
     end
+    
+    def available_specializations
+      Nokogiri::XML(send_specializations_request.response.body).xpath("//specialization").map do |element|
+        [element.xpath('name').inner_text, element.xpath('id').inner_text]
+      end
+    end    
     
     # Override this method if you want to perform some action when connection
     # with linguara cannot be established e.g. log request or redo the send

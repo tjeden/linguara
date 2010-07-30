@@ -135,6 +135,27 @@ describe "Linguara" do
     end
   end
 
+  describe '#available_specializations' do
+    before :each do 
+      @response_body = "<?xml version='1.0' encoding='UTF-8'?>
+        <specializations>
+          <specialization>
+            <id>2</id>
+            <name>IT</name>
+          </specialization>
+          <specialization>
+            <id>3</id>
+            <name>Architecture</name>
+          </specialization>
+       </specializations>"
+      FakeWeb.register_uri(:get, "http://www.example.com/api/specializations.xml", :body => @response_body, :status => 200)      
+    end
+    
+    it 'returns array with languages and codes' do
+      expected_array = [['IT','2'],['Architecture','3']]
+      Linguara.available_specializations.should eql(expected_array)
+    end
+  end
 end
 
 describe 'Linguara::ActiveRecord' do
