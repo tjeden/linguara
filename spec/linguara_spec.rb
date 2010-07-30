@@ -108,6 +108,32 @@ describe "Linguara" do
     end
   
   end
+  
+  describe '#available_languages' do
+    before :each do 
+      @response_body = "<?xml version='1.0' encoding='UTF-8'?>
+        <languages>
+          <language>
+            <code>pl</code>
+            <name>Polish</name>
+          </language>
+          <language>
+            <code>en</code>
+            <name>English</name>
+          </language>
+          <language>
+            <code>tlh</code>
+            <name>Klingon</name>
+          </language>
+       </languages>"
+      FakeWeb.register_uri(:get, "http://www.example.com/api/languages.xml", :body => @response_body, :status => 200)      
+    end
+    
+    it 'returns array with languages and codes' do
+      expected_array = [['Polish','pl'],['English','en'],['Klingon','tlh']]
+      Linguara.available_languages.should eql(expected_array)
+    end
+  end
 
 end
 

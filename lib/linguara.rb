@@ -1,5 +1,6 @@
 require 'net/http'
 require 'uri'
+require 'nokogiri'
 require 'linguara/configuration'
 require 'linguara/utils'
 require 'linguara/translation'
@@ -66,6 +67,12 @@ module Linguara
       url= URI.parse("#{Linguara.configuration.server_path}api/translators.xml")
       req = prepare_request(url, options.merge(:method => :get))
       send_linguara_request(req, url)
+    end
+    
+    def available_languages
+      Nokogiri::XML(send_languages_request.response.body).xpath("//language").map do |element|
+        [element.xpath('name').inner_text, element.xpath('code').inner_text]
+      end
     end
     
     # Override this method if you want to perform some action when connection
