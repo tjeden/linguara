@@ -76,35 +76,24 @@ describe "Linguara" do
   describe '#prepare_request' do
     before :each do
       @url = URI.parse("http://www.example.com/api/translations")
-      @options = { :translation => { :translator => { :city => "Prague"}}}
+      @data = '<translation><site_url>text.com</site_url><account_token>abcdefg</account_token></translation>'
     end
     
     it 'sets :POST by deafault' do
-      request = Linguara.send(:prepare_request, @url, @options)
+      request = Linguara.send(:prepare_request, @url, :post, @data)
       request.is_a?(Net::HTTP::Post).should be_true
       request.body.include?("post").should be_false
     end
     
     it 'sets :GET when option given' do
-      request = Linguara.send(:prepare_request, @url, @options.merge(:method => :get))
+      request = Linguara.send(:prepare_request, @url, :get, @data)
       request.is_a?(Net::HTTP::Get).should be_true
       request.body.include?("get").should be_false
     end
     
-    it 'skips blank parameters' do
-      request = Linguara.send(:prepare_request, @url, @options.merge(:blank_attribute => ""))
-      request.body.include?("blank_attribute").should be_false
-    end
-    
-    it 'skips blank parameters deep' do
-      request = Linguara.send(:prepare_request, @url, @options.merge(:blank_parent => { :blank_attribute => ""}))
-      request.body.include?("blank_attribute").should be_false
-      request.body.include?("blank_parent").should be_false
-    end
-    
-    it 'sets content type to application/x-www-form-urlencoded' do
-      request = Linguara.send(:prepare_request, @url, @options)
-      request.content_type.should be_eql("application/x-www-form-urlencoded")    
+    it 'sets content type to text/xml' do
+      request = Linguara.send(:prepare_request, @url, :get, @data)
+      request.content_type.should be_eql("text/xml")
     end
   
   end

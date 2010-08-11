@@ -7,18 +7,18 @@ describe Translation do
   end
   
   it 'creates default due_date on default' do
-    subject.to_hash[:translation][:due_date].should eql(Date.today + Linguara.configuration.request_valid_for.to_i.days)
+    subject.to_xml.should match(Regexp.new("<due_date>#{Date.today + Linguara.configuration.request_valid_for.to_i.days}</due_date>"))
   end
   
   it 'creates return_url on default' do
-    subject.to_hash[:return_url].should eql(Linguara.configuration.return_url)
+    subject.to_xml.should match(Regexp.new("<return_url>#{Linguara.configuration.return_url}</return_url>"))
   end
   
   it 'sets source language on default' do
-    subject.to_hash[:source_language].should eql(I18n.locale.to_s)
+    subject.to_xml.should match(Regexp.new("<source_language>#{I18n.locale.to_s}</source_language>"))
   end
 
   it 'creates paragraphs for model' do
-    subject.to_hash[:content][:plain][:paragraphs].should eql(@blog_post.fields_to_send)
+    subject.to_xml.should match(Regexp.new("(<paragraph id=['|\"].*['|\"]>[^<>]+</paragraph>\s*)+"))
   end
 end

@@ -19,14 +19,13 @@ class Translation
     ret
   end
 
-  def to_xml(options, builder_options = {})
+  def to_xml(options = {}, builder_options = {})
     builder_options[:indent] ||= 2
     xml = builder_options[:builder] ||= Builder::XmlMarkup.new(:indent => builder_options[:indent])
     xml.instruct! unless builder_options[:skip_instruct]
     xml.translation do
       self.translation_hash.merge(options).each_pair do |k, v|
         next if k.blank? or v.blank?
-        Rails.logger.debug("OBJECT:#{v.inspect}")
         tag_element(xml, k, v)
       end
       xml.content :type => 'xml' do

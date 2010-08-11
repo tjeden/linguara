@@ -61,8 +61,7 @@ module Linguara
     # Sends translators request
     def send_translators_request(options = {})
       url= URI.parse("#{Linguara.configuration.server_path}api/translators.xml")
-      req = prepare_request(url, :get)
-      send_linguara_request(req, url)
+      send_linguara_request(url, :get)
     end
     
     def available_languages
@@ -110,7 +109,7 @@ module Linguara
       "<translation><site_url>#{Linguara.configuration.site_url}</site_url><account_token>#{Linguara.configuration.api_key}</account_token></translation>"
     end
 
-    def send_linguara_request(url, method, data = '' )
+    def prepare_request(url, method, data)
       if method == :get
         req = Net::HTTP::Get.new(url.path)
       else
@@ -120,6 +119,11 @@ module Linguara
       req.body = "#{data}"
       req.content_type = 'text/xml'
       req.basic_auth(Linguara.configuration.user, Linguara.configuration.password)
+      req
+    end
+
+    def send_linguara_request(url, method, data = '' )
+      req = prepare_request url, method, data
       #TODO handle timeout
       begin
         log("SENDING LINGUARA REQUEST TO #{url.path}: \n#{req.body}")
