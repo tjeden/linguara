@@ -44,7 +44,7 @@ module Linguara
      protected
       
       def linguara_key_name(field, index)
-        "#{self.class.class_name}_#{self.id}_#{index}_#{field}"
+        "linguara_#{self.class.class_name}_#{self.id}_#{index}_#{field}"
       end
 
       #override this if you want to have a customised method for determining which language to use.

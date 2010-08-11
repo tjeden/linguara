@@ -37,35 +37,31 @@ module Linguara
     def send_translation_request(element, options = {})
       translation = Translation.new(element, options) 
       url= URI.parse("#{Linguara.configuration.server_path}api/translations.xml")
-      req = prepare_request(url, translation.to_hash.merge( :authorization => true))
-      send_linguara_request(req, url)
+      send_linguara_request(url, :post, translation.to_xml(strip_blank_attributes(options).merge(authorization_options)))
     end
 
     # Sends status request
     def send_status_query(translation_request_id)
       url= URI.parse("#{Linguara.configuration.server_path}api/translations/#{translation_request_id}/status.xml")
-      req = prepare_request(url, :authorization => true)
-      send_linguara_request(req, url)
+      send_linguara_request(url, :post, authorization_xml)
     end
     
     # Sends languages request
     def send_languages_request(options={})
       url= URI.parse("#{Linguara.configuration.server_path}api/languages.xml")
-      req = prepare_request(url, options.merge(:method => :get))
-      send_linguara_request(req, url)
+      send_linguara_request(url, :get)
     end
     
     # Sends specializations request
     def send_specializations_request(options = {})
       url= URI.parse("#{Linguara.configuration.server_path}api/specializations.xml")
-      req = prepare_request(url, options.merge(:method => :get))
-      send_linguara_request(req, url)
+      send_linguara_request(url, :get)
     end
     
     # Sends translators request
     def send_translators_request(options = {})
       url= URI.parse("#{Linguara.configuration.server_path}api/translators.xml")
-      req = prepare_request(url, options.merge(:method => :get))
+      req = prepare_request(url, :get)
       send_linguara_request(req, url)
     end
     
@@ -102,30 +98,28 @@ module Linguara
     end
     
     private
-    
-    def prepare_request(url, data = {} )
-      data = strip_blank_attributes(data)
-      if data[:method] == :get
+
+    def authorization_options
+      {
+        :site_url => Linguara.configuration.site_url,
+        :account_token => Linguara.configuration.api_key
+      }
+    end
+
+    def authorization_xml
+      "<translation><site_url>#{Linguara.configuration.site_url}</site_url><account_token>#{Linguara.configuration.api_key}</account_token></translation>"
+    end
+
+    def send_linguara_request(url, method, data = '' )
+      if method == :get
         req = Net::HTTP::Get.new(url.path)
-        data.delete(:method)
       else
         req = Net::HTTP::Post.new(url.path)
       end
-      if data[:authorization]   
-        data.delete(:authorization)
-        req.body = serialize_form_data({
-          :site_url => Linguara.configuration.site_url,
-          :account_token => Linguara.configuration.api_key
-         }.merge(data))
-      else
-        req.body = serialize_form_data(data)
-      end
-      req.content_type = 'application/x-www-form-urlencoded'
+      #log("BODY ----- :\n\n #{data}")
+      req.body = "#{data}"
+      req.content_type = 'text/xml'
       req.basic_auth(Linguara.configuration.user, Linguara.configuration.password)
-      req
-    end
-    
-    def send_linguara_request(req, url)
       #TODO handle timeout
       begin
         log("SENDING LINGUARA REQUEST TO #{url.path}: \n#{req.body}")
