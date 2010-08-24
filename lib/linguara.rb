@@ -18,16 +18,26 @@ module Linguara
       yield(configuration)
     end
     
-    # Use this method in your controller to accepr and save incoming translations
-    def accept_translation(translation)
-      target_language = translation[:target_language]
-      translation[:paragraphs].each do |key,value|
-        class_name,id,order,field_name = key.split('_')
+    # Use this method in your controller to accept and save incoming translations
+    def accept_translation(body, params)
+      #raise ActiveRecord::StatementInvalid, 'Authorization data is missing or invalid' #TODO
+      raise 'Malformed request body' if params[:translation].blank?
+      target_language = params[:translation][:target_language]
+
+      doc = Nokogiri::XML(body)
+
+      paragraphs = doc.xpath('/translation/completed_translation/content/paragraph')
+      paragraphs.each do |p|
+        log("DOC: #{p.attribute('id')} --- #{p.inner_html}")
+        key = p.attribute('id').to_s
+        value = p.inner_html.to_s
+
+        linguara_name, class_name,id,order,field_name = key.split('_')
         original_locale = I18n.locale
         element = class_name.constantize.find(id)
         
         I18n.locale = target_language
-        element.send("#{field_name}=", value.gsub(/<p>(.*?)<\/p>/, "\\1\n") )
+        element.send("#{field_name}=", value.gsub(/<p>(.*?)<\/p>/, "\\1\n") ).gsub(/<br {0,1}\/{0,1}>/, "\n")
         element.save(false)
         I18n.locale = original_locale
       end
@@ -49,19 +59,19 @@ module Linguara
     # Sends languages request
     def send_languages_request(options={})
       url= URI.parse("#{Linguara.configuration.server_path}api/languages.xml")
-      send_linguara_request(url, :get)
+      send_linguara_request(url, :get, options_to_xml(options))
     end
     
     # Sends specializations request
     def send_specializations_request(options = {})
       url= URI.parse("#{Linguara.configuration.server_path}api/specializations.xml")
-      send_linguara_request(url, :get)
+      send_linguara_request(url, :get, options_to_xml(options))
     end
     
     # Sends translators request
     def send_translators_request(options = {})
       url= URI.parse("#{Linguara.configuration.server_path}api/translators.xml")
-      send_linguara_request(url, :get)
+      send_linguara_request(url, :get, options_to_xml(options))
     end
     
     def available_languages

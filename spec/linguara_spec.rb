@@ -18,13 +18,7 @@ describe "Linguara" do
      blog_post.save
      id = blog_post.id
      lambda {
-       Linguara.accept_translation(            
-            :paragraphs => {
-             "BlogPost_#{id}_0_title" => "Hello World!",
-             "BlogPost_#{id}_1_body" => "Today is great weather, and I am going to EuRuKo."
-            },
-           :source_language =>"pl", 
-           :target_language =>"en"
+       Linguara.accept_translation("<translation><completed_translation><content><paragraph id='linguara_BlogPost_#{id}_0_body'>Today is great weather, and I am going to EuRuKo.</paragraph><paragraph id='linguara_BlogPost_#{id}_0_title'>Hello World!</paragraph></content></completed_translation></translation>", {:translation => { :source_language =>"pl", :target_language =>"en"}}
        )
      }.should change(BlogPost, :count).by(0)
      translation = BlogPost.last
